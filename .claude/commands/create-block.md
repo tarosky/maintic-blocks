@@ -53,6 +53,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Register Maintic block category if not already registered.
+ *
+ * @param array $categories Block categories.
+ * @return array Modified block categories.
+ */
+function maintic_{name_underscore}_block_register_category( $categories ) {
+	foreach ( $categories as $category ) {
+		if ( 'maintic' === $category['slug'] ) {
+			return $categories;
+		}
+	}
+	array_unshift(
+		$categories,
+		array(
+			'slug'  => 'maintic',
+			'title' => 'Maintic',
+		)
+	);
+	return $categories;
+}
+add_filter( 'block_categories_all', 'maintic_{name_underscore}_block_register_category' );
+
+/**
+ * Register {title} block.
+ *
+ * @return void
+ */
 function maintic_{name_underscore}_block_init() {
 	register_block_type( __DIR__ . '/build' );
 }
