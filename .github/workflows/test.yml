@@ -1,0 +1,105 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-assets:
+    name: JS/CSS Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint JavaScript
+        run: npm run lint:js
+
+      - name: Lint CSS
+        run: npm run lint:css
+
+  lint-php:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run PHPCS
+        run: composer lint
+
+  build:
+    name: Build Plugins
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all plugins
+        run: npm run build
+
+      - name: Verify build outputs
+        run: |
+          if [ -d "plugins" ] && [ "$(ls -A plugins 2>/dev/null)" ]; then
+            for plugin in plugins/*/; do
+              if [ -d "${plugin}src" ]; then
+                plugin_name=$(basename "$plugin")
+                if [ ! -d "${plugin}build" ]; then
+                  echo "Error: ${plugin_name}/build directory not found"
+                  exit 1
+                fi
+                echo "✓ ${plugin_name}/build exists"
+              fi
+            done
+          else
+            echo "No plugins to verify"
+          fi
+
+  status:
+    name: Status Check
+    runs-on: ubuntu-latest
+    needs: [lint-assets, lint-php, build]
+    if: always()
+    steps:
+      - uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}

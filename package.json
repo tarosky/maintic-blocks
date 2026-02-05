@@ -1,0 +1,47 @@
+{
+  "name": "maintic-blocks",
+  "version": "1.0.0",
+  "description": "WordPress block library by Maintic",
+  "keywords": [
+    "wordpress-plugin"
+  ],
+  "homepage": "https://github.com/tarosky/maintic-blocks#readme",
+  "bugs": {
+    "url": "https://github.com/tarosky/maintic-blocks/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tarosky/maintic-blocks.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": "Tarosky INC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "wp-env start",
+    "update": "wp-env start --update",
+    "stop": "wp-env stop",
+    "env": "wp-env",
+    "cli": "wp-env run cli wp",
+    "cli:test": "wp-env run tests-cli wp",
+    "build": "node scripts/build-all.mjs",
+    "watch": "node scripts/watch-all.mjs",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "wp-scripts lint-js './plugins/**/src/**/*.js' --no-error-on-unmatched-pattern",
+    "lint:css": "wp-scripts lint-style './plugins/**/src/**/*.scss' --allow-empty-input",
+    "format:js": "wp-scripts lint-js --fix './plugins/**/src/**/*.js' --no-error-on-unmatched-pattern",
+    "format:css": "wp-scripts lint-style --fix './plugins/**/src/**/*.scss' --allow-empty-input"
+  },
+  "engines": {
+    "node": ">=22.0"
+  },
+  "volta": {
+    "node": "22.22.0"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^10.39.0",
+    "@wordpress/scripts": "^31.0.0",
+    "concurrently": "^9.0.0",
+    "glob": "^11.0.0"
+  }
+}

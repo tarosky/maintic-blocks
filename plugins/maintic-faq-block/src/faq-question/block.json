@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "maintic/faq-question",
+	"version": "1.0.0",
+	"title": "質問",
+	"category": "maintic",
+	"icon": "editor-help",
+	"description": "FAQの質問部分",
+	"parent": ["maintic/faq-item"],
+	"attributes": {
+		"question": {
+			"type": "string",
+			"source": "html",
+			"selector": ".wp-block-maintic-faq-question__text"
+		}
+	},
+	"supports": {
+		"reusable": false,
+		"html": false
+	},
+	"textdomain": "maintic-faq-block",
+	"editorScript": "file:./index.js"
+}

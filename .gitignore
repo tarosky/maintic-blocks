@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+plugins/*/build/
+/wp/
+
+# wp-env
+.wp-env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# AI
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
