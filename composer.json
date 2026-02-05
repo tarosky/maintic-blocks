@@ -1,0 +1,34 @@
+{
+	"name": "tarosky/maintic-blocks",
+	"description": "A WordPress block library for Maintic",
+	"type": "wordpress-plugin",
+	"license": "GPL-3.0-or-later",
+	"authors": [
+		{
+			"name": "Tarosky",
+			"email": "sushi@tarosky.co.jp"
+		}
+	],
+	"scripts": {
+		"lint": "phpcs --standard=phpcs.xml",
+		"fix": "phpcbf --standard=phpcs.xml"
+	},
+	"minimum-stability": "stable",
+	"require": {
+		"php": ">=7.4"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^9.0",
+		"yoast/phpunit-polyfills": "^4.0",
+		"wp-coding-standards/wpcs": "^3.0"
+	},
+	"config": {
+		"platform": {
+			"php": "7.4"
+		},
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"php-http/discovery": true
+		}
+	}
+}
