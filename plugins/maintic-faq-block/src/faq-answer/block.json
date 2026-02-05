@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "maintic/faq-answer",
+	"version": "1.0.0",
+	"title": "回答",
+	"category": "maintic",
+	"icon": "format-chat",
+	"description": "FAQの回答部分",
+	"parent": ["maintic/faq-item"],
+	"attributes": {},
+	"supports": {
+		"reusable": false,
+		"html": false
+	},
+	"textdomain": "maintic-faq-block",
+	"editorScript": "file:./index.js"
+}

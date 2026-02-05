@@ -4,6 +4,7 @@ vendor/
 
 # Build outputs
 plugins/*/build/
+/wp/
 
 # wp-env
 .wp-env/

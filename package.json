@@ -15,7 +15,6 @@
   },
   "license": "GPL-3.0-or-later",
   "author": "Tarosky INC",
-  "type": "commonjs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -25,8 +24,8 @@
     "env": "wp-env",
     "cli": "wp-env run cli wp",
     "cli:test": "wp-env run tests-cli wp",
-    "build": "node scripts/build-all.js",
-    "watch": "node scripts/watch-all.js",
+    "build": "node scripts/build-all.mjs",
+    "watch": "node scripts/watch-all.mjs",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:js": "wp-scripts lint-js './plugins/**/src/**/*.js' --no-error-on-unmatched-pattern",
     "lint:css": "wp-scripts lint-style './plugins/**/src/**/*.scss' --allow-empty-input",

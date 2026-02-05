@@ -18,9 +18,13 @@
 		"php": ">=7.4"
 	},
 	"require-dev": {
+		"johnpbloch/wordpress": "6.9",
 		"phpunit/phpunit": "^9.0",
 		"yoast/phpunit-polyfills": "^4.0",
 		"wp-coding-standards/wpcs": "^3.0"
+	},
+	"extra": {
+		"wordpress-install-dir": "wp"
 	},
 	"config": {
 		"platform": {
@@ -28,7 +32,8 @@
 		},
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true,
-			"php-http/discovery": true
+			"php-http/discovery": true,
+			"johnpbloch/wordpress-core-installer": true
 		}
 	}
 }

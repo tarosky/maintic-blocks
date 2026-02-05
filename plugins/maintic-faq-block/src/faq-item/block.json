@@ -1,0 +1,25 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "maintic/faq-item",
+	"version": "1.0.0",
+	"title": "FAQ項目",
+	"category": "maintic",
+	"icon": "format-status",
+	"description": "質問と回答のペア",
+	"parent": ["maintic/faq"],
+	"usesContext": ["maintic/faq/variant"],
+	"attributes": {
+		"variant": {
+			"type": "string",
+			"default": "accordion"
+		}
+	},
+	"supports": {
+		"reusable": false,
+		"html": false
+	},
+	"allowedBlocks": ["maintic/faq-question", "maintic/faq-answer"],
+	"textdomain": "maintic-faq-block",
+	"editorScript": "file:./index.js"
+}
