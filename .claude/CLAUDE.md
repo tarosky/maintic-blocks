@@ -62,7 +62,9 @@ maintic-blocks/
 
 ## Skill
 
-`/create-block` でブロックを対話的に作成できます。詳細は `.claude/commands/create-block.md` を参照。
+- `create-block`: ブロックの新規作成（`@wordpress/create-block` でスキャフォールド）
+  - `/create-block` で明示的に呼び出し可能
+  - 「ブロックを作って」等の依頼で Claude が自動的に使用
 
 ## ビルドシステム
 
