@@ -20,6 +20,6 @@
 		"html": false
 	},
 	"allowedBlocks": ["maintic/faq-question", "maintic/faq-answer"],
-	"textdomain": "maintic-faq-block",
+	"textdomain": "maintic-blocks",
 	"editorScript": "file:./index.js"
 }

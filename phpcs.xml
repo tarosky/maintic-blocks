@@ -25,7 +25,8 @@
 
 	<!-- Check all PHP files in directory tree by default. -->
 	<arg name="extensions" value="php"/>
-	<file>./plugins</file>
+	<file>./maintic-blocks.php</file>
+	<file>./includes</file>
 
 	<!-- Show progress and sniff codes in all reports -->
 	<arg value="ps"/>

@@ -1,6 +1,6 @@
 # create-block
 
-新しい WordPress ブロックプラグインを作成する Skill です。
+新しい WordPress ブロックを作成する Skill です。
 
 ## 使い方
 
@@ -20,74 +20,19 @@
 2. **以下のファイル構造を作成する:**
 
    ```
-   plugins/maintic-{name}-block/
-   ├── src/
-   │   ├── block.json
-   │   ├── index.js
-   │   ├── edit.js
-   │   ├── save.js          # 静的ブロックのみ
-   │   ├── render.php       # 動的ブロックのみ
-   │   ├── style.scss
-   │   └── editor.scss
-   └── maintic-{name}-block.php
+   src/blocks/{name}/
+   ├── block.json
+   ├── index.js
+   ├── edit.js
+   ├── save.js          # 静的ブロックのみ
+   ├── render.php       # 動的ブロックのみ
+   ├── style.scss
+   └── editor.scss
    ```
 
 3. **各ファイルのテンプレート:**
 
-### maintic-{name}-block.php
-
-```php
-<?php
-/**
- * Plugin Name: Maintic {Title} Block
- * Description: {description}
- * Version: 1.0.0
- * Author: Tarosky INC
- * License: GPL-3.0-or-later
- * Text Domain: maintic-{name}-block
- *
- * @package maintic-{name}-block
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
-/**
- * Register Maintic block category if not already registered.
- *
- * @param array $categories Block categories.
- * @return array Modified block categories.
- */
-function maintic_{name_underscore}_block_register_category( $categories ) {
-	foreach ( $categories as $category ) {
-		if ( 'maintic' === $category['slug'] ) {
-			return $categories;
-		}
-	}
-	array_unshift(
-		$categories,
-		array(
-			'slug'  => 'maintic',
-			'title' => 'Maintic',
-		)
-	);
-	return $categories;
-}
-add_filter( 'block_categories_all', 'maintic_{name_underscore}_block_register_category' );
-
-/**
- * Register {title} block.
- *
- * @return void
- */
-function maintic_{name_underscore}_block_init() {
-	register_block_type( __DIR__ . '/build' );
-}
-add_action( 'init', 'maintic_{name_underscore}_block_init' );
-```
-
-### src/block.json
+### src/blocks/{name}/block.json
 
 ```json
 {
@@ -103,7 +48,7 @@ add_action( 'init', 'maintic_{name_underscore}_block_init' );
 	"supports": {
 		// supports の内容
 	},
-	"textdomain": "maintic-{name}-block",
+	"textdomain": "maintic-blocks",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
@@ -111,7 +56,7 @@ add_action( 'init', 'maintic_{name_underscore}_block_init' );
 }
 ```
 
-### src/index.js
+### src/blocks/{name}/index.js
 
 ```js
 import { registerBlockType } from '@wordpress/blocks';
@@ -126,7 +71,7 @@ registerBlockType( metadata.name, {
 } );
 ```
 
-### src/edit.js（静的ブロック）
+### src/blocks/{name}/edit.js（静的ブロック）
 
 ```js
 import { useBlockProps } from '@wordpress/block-editor';
@@ -141,7 +86,7 @@ export default function Edit() {
 }
 ```
 
-### src/edit.js（動的ブロック）
+### src/blocks/{name}/edit.js（動的ブロック）
 
 ```js
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
@@ -164,7 +109,7 @@ export default function Edit() {
 }
 ```
 
-### src/save.js（静的ブロックのみ）
+### src/blocks/{name}/save.js（静的ブロックのみ）
 
 ```js
 import { useBlockProps } from '@wordpress/block-editor';
@@ -178,14 +123,14 @@ export default function save() {
 }
 ```
 
-### src/render.php（動的ブロックのみ）
+### src/blocks/{name}/render.php（動的ブロックのみ）
 
 ```php
 <?php
 /**
  * Render callback for {title} block.
  *
- * @package maintic-{name}-block
+ * @package maintic-blocks
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
@@ -195,11 +140,11 @@ export default function save() {
 $wrapper_attributes = get_block_wrapper_attributes();
 ?>
 <div <?php echo $wrapper_attributes; ?>>
-	<p><?php esc_html_e( '{title}', 'maintic-{name}-block' ); ?></p>
+	<p><?php esc_html_e( '{title}', 'maintic-blocks' ); ?></p>
 </div>
 ```
 
-### src/style.scss
+### src/blocks/{name}/style.scss
 
 ```scss
 .wp-block-maintic-{name} {
@@ -207,7 +152,7 @@ $wrapper_attributes = get_block_wrapper_attributes();
 }
 ```
 
-### src/editor.scss
+### src/blocks/{name}/editor.scss
 
 ```scss
 .wp-block-maintic-{name} {
@@ -215,8 +160,11 @@ $wrapper_attributes = get_block_wrapper_attributes();
 }
 ```
 
-4. **作成後の案内:**
-   - `npm install` で依存関係をインストール（未実行の場合）
+4. **ブロック固有のPHP機能がある場合:**
+   - `includes/{name}.php` にPHPコードを配置
+   - `maintic-blocks.php` に `require_once` を追加
+
+5. **作成後の案内:**
    - `npm run build` でビルド
    - `npm run start` で wp-env 起動
    - WordPress 管理画面でブロックが使えることを確認
@@ -232,5 +180,6 @@ $wrapper_attributes = get_block_wrapper_attributes();
 ## 注意事項
 
 - ブロック名は英小文字とハイフンのみ使用可能
-- 既存の同名プラグインがある場合は上書き確認
+- 既存の同名ブロックがある場合は上書き確認
 - 動的ブロックの場合は save.js は作成せず、render.php を作成する
+- テキストドメインは `maintic-blocks` で統一

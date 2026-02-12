@@ -1,34 +1,11 @@
 <?php
 /**
- * Plugin Name: Maintic FAQ Block
- * Description: よくある質問（FAQ）を表示するブロック。JSON-LD構造化データ出力対応。
- * Version: 1.0.0
- * Author: Tarosky INC
- * License: GPL-3.0-or-later
- * Text Domain: maintic-faq-block
+ * FAQ block features.
  *
- * @package maintic-faq-block
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
-/**
- * Register FAQ blocks.
+ * Outputs JSON-LD structured data for FAQ blocks.
  *
- * @return void
+ * @package maintic-blocks
  */
-function maintic_faq_block_init() {
-	// 親ブロック
-	register_block_type( __DIR__ . '/build' );
-
-	// 子ブロック
-	register_block_type( __DIR__ . '/build/faq-item' );
-	register_block_type( __DIR__ . '/build/faq-question' );
-	register_block_type( __DIR__ . '/build/faq-answer' );
-}
-add_action( 'init', 'maintic_faq_block_init' );
 
 /**
  * Output FAQ JSON-LD structured data.
@@ -85,11 +62,11 @@ add_action( 'wp_head', 'maintic_faq_block_output_json_ld' );
 function maintic_faq_block_extract_faq_data( $post ) {
 	$post = get_post( $post );
 	if ( ! $post || ! has_blocks( $post ) ) {
-		return [];
+		return array();
 	}
 
 	$blocks   = parse_blocks( $post->post_content );
-	$faq_data = [];
+	$faq_data = array();
 
 	maintic_faq_block_find_faq_blocks( $blocks, $faq_data );
 
@@ -115,7 +92,7 @@ function maintic_faq_block_find_faq_blocks( $blocks, &$faq_data ) {
 				$question = '';
 				$answer   = '';
 
-				foreach ( $item_block['innerBlocks'] ?? [] as $child_block ) {
+				foreach ( $item_block['innerBlocks'] ?? array() as $child_block ) {
 					if ( 'maintic/faq-question' === $child_block['blockName'] ) {
 						// 静的ブロックの場合、innerHTML から取得
 						$question = wp_strip_all_tags( $child_block['innerHTML'] ?? '' );
@@ -123,7 +100,7 @@ function maintic_faq_block_find_faq_blocks( $blocks, &$faq_data ) {
 					} elseif ( 'maintic/faq-answer' === $child_block['blockName'] ) {
 						// 回答の InnerBlocks をレンダリング
 						$answer_html = '';
-						foreach ( $child_block['innerBlocks'] ?? [] as $answer_inner ) {
+						foreach ( $child_block['innerBlocks'] ?? array() as $answer_inner ) {
 							$answer_html .= render_block( $answer_inner );
 						}
 						$answer = wp_strip_all_tags( $answer_html );
@@ -132,10 +109,10 @@ function maintic_faq_block_find_faq_blocks( $blocks, &$faq_data ) {
 				}
 
 				if ( ! empty( $question ) && ! empty( $answer ) ) {
-					$faq_data[] = [
+					$faq_data[] = array(
 						'question' => $question,
 						'answer'   => $answer,
-					];
+					);
 				}
 			}
 		}

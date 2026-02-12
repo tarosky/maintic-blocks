@@ -59,7 +59,7 @@ jobs:
         run: composer lint
 
   build:
-    name: Build Plugins
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -74,25 +74,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build all plugins
+      - name: Build
         run: npm run build
 
       - name: Verify build outputs
         run: |
-          if [ -d "plugins" ] && [ "$(ls -A plugins 2>/dev/null)" ]; then
-            for plugin in plugins/*/; do
-              if [ -d "${plugin}src" ]; then
-                plugin_name=$(basename "$plugin")
-                if [ ! -d "${plugin}build" ]; then
-                  echo "Error: ${plugin_name}/build directory not found"
-                  exit 1
-                fi
-                echo "✓ ${plugin_name}/build exists"
-              fi
-            done
-          else
-            echo "No plugins to verify"
+          if [ ! -d "build/blocks" ]; then
+            echo "Error: build/blocks directory not found"
+            exit 1
           fi
+          echo "✓ build/blocks exists"
+          ls -la build/blocks/
 
   status:
     name: Status Check

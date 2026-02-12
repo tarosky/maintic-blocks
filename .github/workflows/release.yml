@@ -21,83 +21,29 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-          tools: composer
-
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-progress --no-dev
-
-      - name: Build all plugins
+      - name: Build
         run: npm run build
 
-      - name: Create plugin zips
+      - name: Create plugin zip
         run: |
-          mkdir -p dist
+          mkdir -p dist tmp/maintic-blocks
 
-          # Create individual plugin zips
-          if [ -d "plugins" ] && [ "$(ls -A plugins 2>/dev/null)" ]; then
-            for plugin in plugins/*/; do
-              if [ -d "${plugin}src" ]; then
-                plugin_name=$(basename "$plugin")
-                echo "Creating ${plugin_name}.zip..."
+          # Copy plugin files (excluding dev files)
+          cp maintic-blocks.php tmp/maintic-blocks/
+          cp -r build tmp/maintic-blocks/
+          cp -r includes tmp/maintic-blocks/
 
-                # Create temp directory for zip contents
-                mkdir -p "tmp/${plugin_name}"
-
-                # Copy plugin files (excluding dev files)
-                cp -r "${plugin}"* "tmp/${plugin_name}/" 2>/dev/null || true
-                rm -rf "tmp/${plugin_name}/node_modules"
-                rm -rf "tmp/${plugin_name}/src"
-                rm -f "tmp/${plugin_name}/package.json"
-                rm -f "tmp/${plugin_name}/package-lock.json"
-
-                # Create zip
-                cd tmp
-                zip -r "../dist/${plugin_name}.zip" "${plugin_name}"
-                cd ..
-
-                echo "✓ Created ${plugin_name}.zip"
-              fi
-            done
-          fi
-
-          # Create all-in-one zip
-          echo "Creating maintic-blocks-all.zip..."
-          mkdir -p tmp/maintic-blocks
-
-          # Copy mu-plugins
-          if [ -d "mu-plugins" ]; then
-            cp -r mu-plugins tmp/maintic-blocks/
-          fi
-
-          # Copy all built plugins
-          if [ -d "plugins" ]; then
-            mkdir -p tmp/maintic-blocks/plugins
-            for plugin in plugins/*/; do
-              if [ -d "${plugin}src" ]; then
-                plugin_name=$(basename "$plugin")
-                cp -r "tmp/${plugin_name}" "tmp/maintic-blocks/plugins/"
-              fi
-            done
-          fi
-
+          # Create zip
           cd tmp
-          zip -r ../dist/maintic-blocks-all.zip maintic-blocks
+          zip -r ../dist/maintic-blocks.zip maintic-blocks
           cd ..
-
-          echo "✓ Created maintic-blocks-all.zip"
 
           # Cleanup
           rm -rf tmp
 
-          # List created files
-          echo ""
           echo "Created assets:"
           ls -la dist/
 

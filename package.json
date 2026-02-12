@@ -14,23 +14,26 @@
     "url": "git+https://github.com/tarosky/maintic-blocks.git"
   },
   "license": "GPL-3.0-or-later",
-  "author": "Tarosky INC",
-  "main": "index.js",
+  "author": "Tarosky INC <sushi@tarosky.co.jp>",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "wp-env start",
     "update": "wp-env start --update",
     "stop": "wp-env stop",
-    "env": "wp-env",
     "cli": "wp-env run cli wp",
     "cli:test": "wp-env run tests-cli wp",
-    "build": "node scripts/build-all.mjs",
-    "watch": "node scripts/watch-all.mjs",
+    "build": "npm run build:css && npm run build:js && npm run build:blocks && npm run dump",
+    "build:js": "test -n \"$(find src/js -name '*.js' 2>/dev/null)\" && grab-deps js src/js build/js js || echo 'No JS to bundle'",
+    "build:css": "test -n \"$(find src/scss -name '*.scss' 2>/dev/null)\" && (sass ./src/scss/:./build/css/ --style=compressed && postcss ./build/css/**/*.css --replace) || echo 'No SCSS to compile'",
+    "build:blocks": "wp-scripts build --source-path=src/blocks --output-path=build/blocks",
+    "dump": "test -d build/js -o -d build/css && grab-deps dump build/js,build/css wp-dependencies.json || echo 'No non-block assets to dump'",
+    "watch": "npm-watch",
+    "watch:blocks": "wp-scripts start --source-path=src/blocks --output-path=build/blocks",
     "lint": "npm run lint:js && npm run lint:css",
-    "lint:js": "wp-scripts lint-js './plugins/**/src/**/*.js' --no-error-on-unmatched-pattern",
-    "lint:css": "wp-scripts lint-style './plugins/**/src/**/*.scss' --allow-empty-input",
-    "format:js": "wp-scripts lint-js --fix './plugins/**/src/**/*.js' --no-error-on-unmatched-pattern",
-    "format:css": "wp-scripts lint-style --fix './plugins/**/src/**/*.scss' --allow-empty-input"
+    "lint:js": "wp-scripts lint-js './src/**/*.js'",
+    "lint:css": "wp-scripts lint-style './src/**/*.scss'",
+    "format:js": "wp-scripts lint-js --fix './src/**/*.js'",
+    "format:css": "wp-scripts lint-style --fix './src/**/*.scss'"
   },
   "engines": {
     "node": ">=22.0"
@@ -39,9 +42,40 @@
     "node": "22.22.0"
   },
   "devDependencies": {
+    "@kunoichi/grab-deps": "^3.1.4",
     "@wordpress/env": "^10.39.0",
     "@wordpress/scripts": "^31.0.0",
-    "concurrently": "^9.0.0",
-    "glob": "^11.0.0"
+    "autoprefixer": "^10.4.23",
+    "npm-watch": "^0.13.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.97.1"
+  },
+  "watch": {
+    "dump": {
+      "extensions": "js,css",
+      "patterns": [
+        "build/js",
+        "build/css"
+      ]
+    },
+    "build:blocks": {
+      "extensions": "js,scss,php,json",
+      "patterns": [
+        "src/blocks"
+      ]
+    },
+    "build:js": {
+      "extensions": "js",
+      "patterns": [
+        "src/js"
+      ]
+    },
+    "build:css": {
+      "extensions": "scss",
+      "patterns": [
+        "src/scss"
+      ]
+    }
   }
 }
