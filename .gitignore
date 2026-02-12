@@ -3,8 +3,9 @@ node_modules/
 vendor/
 
 # Build outputs
-plugins/*/build/
+build/
 /wp/
+wp-dependencies.json
 
 # wp-env
 .wp-env/

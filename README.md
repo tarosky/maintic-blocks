@@ -1,109 +1,51 @@
 # Maintic Blocks
 
-Maintic のための WordPress ブロックライブラリ。各ブロックは独立したプラグインとして `plugins/` に配置される monorepo 構成です。
+Contributors: tarosky, Takahashi_Fumiki  
+Tags: blocks, gutenberg, faq  
+Tested up to: 6.9  
+Stable Tag: nightly  
+Requires at least: 6.6  
+Requires PHP: 7.4  
+License: GPL 3.0 or later  
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-## 必要環境
+Maintic block library for WordPress.
 
-- Node.js 22 以上（Volta で管理）
-- Docker Desktop（wp-env 用）
-- Composer（PHP lint 用）
+## Description
 
-## セットアップ
+A single WordPress plugin that provides multiple Gutenberg blocks for the Maintic ecosystem.
 
-```bash
-# 依存関係のインストール
-npm install
-composer install
+### Included Blocks
 
-# 開発環境の起動
-npm run start
+- **FAQ** — Accordion-style FAQ block with JSON-LD structured data output.
+
+## Installation
+
+1. Download the latest release zip from [GitHub Releases](https://github.com/tarosky/maintic-blocks/releases).
+2. Upload the zip from **Plugins > Add New > Upload Plugin** in the WordPress admin.
+3. Activate the plugin.
+
+## Frequently Asked Questions
+
+### How can I disable specific blocks?
+
+Use the `maintic_blocks_disabled_blocks` filter:
+
+```php
+add_filter( 'maintic_blocks_disabled_blocks', function ( $disabled ) {
+    $disabled[] = 'maintic/faq';
+    return $disabled;
+} );
 ```
 
-WordPress は http://localhost:8888 で起動します（管理者: admin / password）。
+Disabling a parent block automatically disables all its child blocks.
 
-## ディレクトリ構造
+### How can I contribute?
 
-```
-maintic-blocks/
-├── .claude/commands/     # Claude Code Skills
-├── .github/workflows/    # CI/CD
-├── mu-plugins/           # Must-use プラグイン（共通機能）
-├── plugins/              # 各ブロックプラグイン
-│   └── maintic-{name}-block/
-│       ├── src/          # ソースコード
-│       ├── build/        # ビルド成果物（生成）
-│       └── maintic-{name}-block.php
-├── scripts/              # ビルドスクリプト
-├── .wp-env.json          # wp-env 設定
-└── package.json
-```
+Contributions are welcome at our [GitHub repository](https://github.com/tarosky/maintic-blocks). Please open an [issue](https://github.com/tarosky/maintic-blocks/issues) or [pull request](https://github.com/tarosky/maintic-blocks/pulls).
 
-## 開発コマンド
+## Changelog
 
-| コマンド | 説明 |
-|---------|------|
-| `npm run start` | wp-env 起動 |
-| `npm run stop` | wp-env 停止 |
-| `npm run build` | 全プラグインをビルド |
-| `npm run watch` | 全プラグインを watch モードでビルド |
-| `npm run lint` | JS/CSS lint |
-| `npm run lint:js` | JavaScript lint |
-| `npm run lint:css` | SCSS lint |
-| `npm run format:js` | JavaScript 自動修正 |
-| `npm run format:css` | SCSS 自動修正 |
-| `composer lint` | PHP lint（PHPCS） |
-| `composer fix` | PHP 自動修正（PHPCBF） |
+### 1.0.0
 
-## 新しいブロックの作成
-
-### Claude Code を使う場合
-
-```
-/create-block
-```
-
-対話形式でブロック名、タイプ（静的/動的）、サポート機能などを指定できます。
-
-### 手動で作成する場合
-
-1. `plugins/maintic-{name}-block/` ディレクトリを作成
-2. 以下のファイルを作成:
-   - `maintic-{name}-block.php` - メインプラグインファイル
-   - `src/block.json` - ブロックメタデータ
-   - `src/index.js` - ブロック登録
-   - `src/edit.js` - エディタコンポーネント
-   - `src/save.js` - 保存コンポーネント（静的ブロック）
-   - `src/render.php` - サーバーサイドレンダリング（動的ブロック）
-   - `src/style.scss` - フロントエンドスタイル
-   - `src/editor.scss` - エディタ専用スタイル
-
-### ブロックの命名規則
-
-- プラグインディレクトリ: `maintic-{機能名}-block`
-- ブロック名（block.json）: `maintic/{機能名}`
-- カテゴリ: `maintic`（mu-plugins で自動登録済み）
-
-## ビルド
-
-```bash
-# 全プラグインをビルド
-npm run build
-
-# 開発時は watch モード
-npm run watch
-```
-
-ビルド成果物は各プラグインの `build/` ディレクトリに出力されます。
-
-## CI/CD
-
-GitHub Actions で以下を自動実行:
-
-- **lint.yml**: JS/CSS/PHP の lint チェック
-- **build.yml**: 全プラグインのビルド検証
-
-PR 作成時および main ブランチへの push 時に実行されます。
-
-## ライセンス
-
-GPL-3.0-or-later
+- Initial release with FAQ block.

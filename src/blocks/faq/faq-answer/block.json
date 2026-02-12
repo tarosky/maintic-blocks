@@ -13,6 +13,6 @@
 		"reusable": false,
 		"html": false
 	},
-	"textdomain": "maintic-faq-block",
+	"textdomain": "maintic-blocks",
 	"editorScript": "file:./index.js"
 }
