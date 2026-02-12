@@ -27,23 +27,26 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Generate readme.txt
+        uses: tarosky/workflows/actions/wp-readme@main
+
+      - name: Versioning
+        uses: tarosky/workflows/actions/versioning@main
+        with:
+          version: ${{ github.ref }}
+          files: maintic-blocks.php
+
+      - name: Clean by distignore
+        uses: tarosky/workflows/actions/distignore@main
+
       - name: Create plugin zip
         run: |
           mkdir -p dist tmp/maintic-blocks
-
-          # Copy plugin files (excluding dev files)
-          cp maintic-blocks.php tmp/maintic-blocks/
-          cp -r build tmp/maintic-blocks/
-          cp -r includes tmp/maintic-blocks/
-
-          # Create zip
+          rsync -a --exclude='dist' --exclude='tmp' . tmp/maintic-blocks/
           cd tmp
           zip -r ../dist/maintic-blocks.zip maintic-blocks
           cd ..
-
-          # Cleanup
           rm -rf tmp
-
           echo "Created assets:"
           ls -la dist/
 
