@@ -13,8 +13,9 @@ Maintic ブロックライブラリ。単一の WordPress プラグインとし�
 ```
 maintic-blocks/
 ├── maintic-blocks.php       # メインプラグインファイル
-├── includes/                # PHP機能モジュール
-│   └── faq.php              # FAQ JSON-LD
+├── includes/
+│   └── blocks/              # ブロック固有PHP（オートロード）
+│       └── {slug}.php       # トップレベルブロック用（例: faq.php）
 ├── src/
 │   ├── blocks/              # ブロックソース
 │   │   └── {name}/
@@ -51,6 +52,13 @@ maintic-blocks/
 5. **ブロック登録**
    - `build/blocks/` を再帰スキャンして自動登録
    - 新しいブロックは `src/blocks/{name}/` に配置するだけで認識される
+   - フィルター `maintic_blocks_disabled_blocks` で特定ブロックの登録をスキップ可能
+   - 親ブロックが無効化されると子ブロックも自動で無効化される
+
+6. **ブロック固有PHPのオートロード**
+   - トップレベルブロック（`parent` なし）の登録時に `includes/blocks/{slug}.php` を自動読み込み
+   - 子ブロック用のPHPは親ブロックのファイルにまとめる
+   - ブロックが無効化されていればPHPも読み込まれない
 
 ## Skill
 

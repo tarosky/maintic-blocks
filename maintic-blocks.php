@@ -20,6 +20,11 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Register all blocks from build/blocks/.
+ *
+ * Supports:
+ * - Filter `maintic_blocks_disabled_blocks` to skip specific blocks.
+ * - Cascading disable: child blocks whose parent is disabled are also removed.
+ * - Auto-loading: includes/blocks/{slug}.php is loaded for top-level blocks.
  */
 add_action(
 	'init',
@@ -28,6 +33,9 @@ add_action(
 		if ( ! is_dir( $blocks_dir ) ) {
 			return;
 		}
+
+		// 1. Discover all block.json files.
+		$blocks   = array();
 		$iterator = new RecursiveIteratorIterator(
 			new RecursiveDirectoryIterator( $blocks_dir, FilesystemIterator::SKIP_DOTS )
 		);
@@ -35,7 +43,55 @@ add_action(
 			if ( 'block.json' !== $file->getFilename() ) {
 				continue;
 			}
-			register_block_type( $file->getPath() );
+			$metadata = wp_json_file_decode( $file->getPathname(), array( 'associative' => true ) );
+			if ( ! $metadata || empty( $metadata['name'] ) ) {
+				continue;
+			}
+			$blocks[ $metadata['name'] ] = array(
+				'path'     => $file->getPath(),
+				'metadata' => $metadata,
+			);
+		}
+
+		// 2. Apply disabled blocks filter.
+		$disabled = apply_filters( 'maintic_blocks_disabled_blocks', array() );
+		foreach ( $disabled as $name ) {
+			unset( $blocks[ $name ] );
+		}
+
+		// 3. Remove orphan blocks (parent not in $blocks).
+		do {
+			$removed = false;
+			foreach ( $blocks as $name => $block ) {
+				if ( empty( $block['metadata']['parent'] ) ) {
+					continue;
+				}
+				foreach ( $block['metadata']['parent'] as $parent ) {
+					if ( isset( $blocks[ $parent ] ) ) {
+						continue 2; // At least one parent exists.
+					}
+				}
+				// No valid parent found.
+				unset( $blocks[ $name ] );
+				$removed = true;
+			}
+		} while ( $removed );
+
+		// 4. Register surviving blocks.
+		foreach ( $blocks as $block ) {
+			register_block_type( $block['path'] );
+		}
+
+		// 5. Auto-load PHP for top-level blocks.
+		foreach ( $blocks as $name => $block ) {
+			if ( ! empty( $block['metadata']['parent'] ) ) {
+				continue;
+			}
+			$slug     = str_replace( 'maintic/', '', $name );
+			$php_file = __DIR__ . '/includes/blocks/' . $slug . '.php';
+			if ( file_exists( $php_file ) ) {
+				require_once $php_file;
+			}
 		}
 	}
 );
@@ -92,6 +148,3 @@ add_action(
 		}
 	}
 );
-
-// Load feature modules.
-require_once __DIR__ . '/includes/faq.php';
