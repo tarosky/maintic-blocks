@@ -54,7 +54,7 @@ jobs:
         run: |
           for file in dist/*.zip; do
             echo "Uploading $(basename "$file")..."
-            gh release upload "${{ github.event.release.tag_name }}" "$file" --clobber
+            gh release upload "${{ github.event.release.tag_name }}" "$file" --clobber --repo "${{ github.repository }}"
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
